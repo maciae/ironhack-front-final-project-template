@@ -16,7 +16,6 @@ import { useUserStore } from "./store/user.js";
 import Navigation from "./components/Navigation.vue";
 
 const router = useRouter();
-const route = useRoute();
 
 const userStore = useUserStore();
 const { user } = storeToRefs(userStore);
@@ -26,10 +25,7 @@ onMounted(async () => {
 
   const isValidRoute = (window.location.pathname === '/register' || window.location.pathname === '/auth')
 
-  try {
-    console.log(window.location.pathname)
-
-  console.log(router.currentRoute.value)
+  try {    
     await userStore.fetchUser(); // here we call fetch user
     
     if (!user.value && !isValidRoute) {

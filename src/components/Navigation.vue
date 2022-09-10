@@ -7,20 +7,25 @@
         </div>
         <ul class="flex flex-1 justify-end gap-x-10">
             <router-link class="cursor-pointer" :to="{name: 'Home'}">Home</router-link>
-            <router-link class="cursor-pointer" :to="{name: ''}">Create</router-link>
-            <router-link class="cursor-pointer" :to="{name: 'Login'}">Login</router-link>
-            <li @click="logout" class="cursor-pointer">Logout</li>
+            <router-link v-if="user" class="cursor-pointer" :to="{name: 'Create'}">Create</router-link>
+            <router-link v-if="!user" class="cursor-pointer" :to="{name: 'Login'}">Login</router-link>
+            
+            <li v-if="user" @click="logout" class="cursor-pointer">Logout</li>
         </ul>
     </nav>
   </header>
 </template>
 
 <script>
+import { storeToRefs } from "pinia";
 import { useUserStore } from "./../store/user";
+
 export default {
   setup() {
     const userStore = useUserStore();
-   return{userStore}
+    const { user } = storeToRefs(userStore);
+
+    return{userStore, user}
   },
   methods : {
     async logout() {
