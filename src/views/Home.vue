@@ -2,6 +2,7 @@
   <div>
     <div>
         <form 
+            v-if="user != null"
             @submit.prevent="createTask" 
             class="p-8 flex flex-col bg-light-grey rounded-md shadow-lg"
             >
@@ -113,6 +114,10 @@ export default {
         const userStore = useUserStore();
         const { user } = storeToRefs(userStore);
         const name = ref("");
+
+        if (!user){
+            router.push({name: "Login"})
+        }
 
         const createTask = async () => {
             if (name.value.length > 0){    
