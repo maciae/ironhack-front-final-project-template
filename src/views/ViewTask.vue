@@ -1,17 +1,5 @@
 <template>
   <div>
-    <div v-if="errorMsg" class="mb-10 p-4 rounded-md bg-light-grey shadow-lg">
-        <p class="text-red-500">
-            {{ errorMsg }}
-        </p>
-    </div>
-
-    <div v-if="successMsg" class="mb-10 p-4 rounded-md bg-light-grey shadow-lg">
-        <p class="text-red-500">
-            {{ successMsg }}
-        </p>
-    </div>
-
     <div v-if="dataLoaded">
         <form 
             @submit.prevent="createTask" 
@@ -65,11 +53,6 @@
                 </button>
             </div>
         </form>
-        <div v-if="successMsg" class="mb-10 p-4 rounded-md bg-light-grey shadow-lg bg-orange-200">
-            <p class="text-red-500 font-bold">
-                {{ errorMsg }}
-            </p>
-        </div>
     </div>
 
   </div>
@@ -89,8 +72,6 @@ export default {
     name: "view-task",
     setup() {
         const name = ref("");
-        const errorMsg = ref(null);
-        const successMsg = ref(null);
         const userStore = useUserStore();
         const { user } = storeToRefs(userStore);
         const tasksStore = useTaskStore();
@@ -116,10 +97,7 @@ export default {
         const update = async () => {
             try {
                 await tasksStore.update(taskId, data.value.title, data.value.is_complete)
-                successMsg.value = "Success: Workout Updated!";
-                setTimeout(() => {
-                    successMsg.value = false;
-                }, 5000);
+                router.push({name: "Home"})
             } catch (error) {
                 console.warn(error.message);
             }
@@ -129,10 +107,6 @@ export default {
         const remove = async () => {
             try {
                 await tasksStore.delete(taskId, data.value.title, data.value.is_complete)
-                successMsg.value = "Success: Workout Updated!";
-                setTimeout(() => {
-                    successMsg.value = false;
-                }, 5000);
                 router.push({name: "Home"})
             } catch (error) {
                 console.warn(error.message);
@@ -142,9 +116,7 @@ export default {
         return { 
             name, 
             dataLoaded, 
-            data, 
-            errorMsg, 
-            successMsg, 
+            data,
             update, 
             tasksStore,
             remove

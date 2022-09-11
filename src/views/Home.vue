@@ -66,7 +66,7 @@
                     draggable="true"
                     @dragstart="startDrag($event, task, 1)"
                 >
-                <h1>{{task.title}}</h1>
+                    <h1>{{task.title}}</h1>
                 </router-link>
             </div>
         </div>
@@ -141,16 +141,23 @@ export default {
         };
         getData();
         const startDrag = (event, item, originList) => {
+            console.log("start drag")
             console.log(item);
+
+            event.dataTransfer.setData('text/plain', 'dummy');
+
             event.target.style.opacity=1;
             event.dataTransfer.dropEffect = "move";
             event.dataTransfer.effectAllowed = "move";
             event.dataTransfer.setData("itemID", item.id);
             event.dataTransfer.setData("originList", originList);
         };
+
         const onDrop = (event, list) => {
+            
             const itemID = event.dataTransfer.getData("itemID");
             const originList = event.dataTransfer.getData("originList");
+            alert("drop drag" + originList)
             let isCompleted = true;
             if (originList != list) {
                 if (list == 1) { // TODO LIST
@@ -159,6 +166,7 @@ export default {
                 const updateCompleted = async () => {
                     try {
                         await tasksStore.setTaskCompleted(itemID, isCompleted);
+
                         getData();
                     }
                     catch (error) {
