@@ -52,7 +52,7 @@
                 To-Do Tasks
             </h2>
             <div 
-                class="to-do-list [&>a]:bg-sky-200 bg-sky-100 h-full p-5"
+                class="to-do-list [&>a]:bg-sky-200 [&>a]:border-2 [&>a]:border-slate-900 bg-sky-100 h-full p-5"
                 @drop="onDrop($event, 1)"
                 @dragenter.prevent
                 @dragover.prevent
@@ -75,7 +75,7 @@
                 Done Tasks
             </h2>
             <div 
-                class="done-list [&>a]:bg-lime-200 bg-lime-100 h-full p-5"
+                class="done-list [&>a]:bg-lime-200 [&>a]:border-2 [&>a]:border-slate-900  bg-lime-100 h-full p-5"
                 @drop="onDrop($event, 2)"
                 @dragenter.prevent
                 @dragover.prevent
@@ -142,6 +142,7 @@ export default {
         getData();
         const startDrag = (event, item, originList) => {
             console.log(item);
+            event.target.style.opacity=1;
             event.dataTransfer.dropEffect = "move";
             event.dataTransfer.effectAllowed = "move";
             event.dataTransfer.setData("itemID", item.id);
@@ -155,17 +156,18 @@ export default {
                 if (list == 1) { // TODO LIST
                     isCompleted = false;
                 }
+                const updateCompleted = async () => {
+                    try {
+                        await tasksStore.setTaskCompleted(itemID, isCompleted);
+                        getData();
+                    }
+                    catch (error) {
+                        console.warn(error.message);
+                    }
+                };
+                updateCompleted();
             }
-            const updateCompleted = async () => {
-                try {
-                    await tasksStore.setTaskCompleted(itemID, isCompleted);
-                    getData();
-                }
-                catch (error) {
-                    console.warn(error.message);
-                }
-            };
-            updateCompleted();
+
         };
         return {
             dataCompleted,
