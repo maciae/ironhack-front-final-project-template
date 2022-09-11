@@ -46,6 +46,7 @@
 import { ref } from "vue";
 import { supabase } from '../supabase';
 import { useUserStore } from "./../store/user";
+import { useTaskStore } from "./../store/task";
 import { storeToRefs } from "pinia";
 
 
@@ -57,23 +58,20 @@ export default {
         const errorMsg = ref(null);
         const successMsg = ref(null);
         const userStore = useUserStore();
+        const taskStore = useTaskStore();
         const { user } = storeToRefs(userStore);
 
         const createTask = async () => {
-            try {
-                const { data, error } = await supabase.from('tasks')
-                .insert([
-                    { 
-                        title: name.value, 
-                        user_id: user._object.user.id,
-                        is_complete: false 
-                    }
-                ]);
-                if (error) throw error;
-                successMsg.value = `Success: Task with name ${ name.value } created!`;
-                name.value = null;
-            } catch (error) {
-                errorMsg.value = `Error: ${error.mesage}`
+            if (name.value.length > 0){    
+                try {
+                    console.log("name value es " + name.value)
+                    await taskStore.create(name.value, user._object.user.id);
+                    successMsg.value = `Success: Task with name ${ name.value } created!`;
+                } catch (error) {
+                    errorMsg.value = `Error: ${error.mesage}`
+                }
+            } else {
+                errorMsg.value = "Error: El nombre de la tarea no puede estar vacío"
             }
         }
             

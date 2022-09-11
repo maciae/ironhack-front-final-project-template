@@ -84,10 +84,10 @@ export default {
             if (password.value === confirmPassword.value){
                 try{   
                     await userStore.signUp(email.value, password.value)
-                    if (error) throw error;
                     router.push({name: "Login"})
                 } catch (error) {
-                    console.log("error")
+                    console.log("error on singup")
+                    console.log(error.message)
                     errorMsg.value = error.message;
                 }
                 return;

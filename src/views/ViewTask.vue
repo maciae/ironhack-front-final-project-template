@@ -46,14 +46,24 @@
 
             </div>
 
-            <button 
-                type="submit" 
-                @click="update"
-                class="mt-6 py-2 px-6 rounded-sm self-start text-sm text-white bg-at-light-green 
-                    duration-200 border-solid border-2 border-transparent hover:border-at-light-green hover:bg-white hover:text-at-light-green"
-                >
-                Update
-            </button>
+            <div class="d-flex [&>button]:mr-2">
+                <button 
+                    type="submit" 
+                    @click="update"
+                    class="mt-6 py-2 px-6 rounded-sm self-start text-sm text-white bg-at-light-green 
+                        duration-200 border-solid border-2 border-transparent hover:border-at-light-green hover:bg-white hover:text-at-light-green"
+                    >
+                    Update
+                </button>
+                <button 
+                    type="submit" 
+                    @click="remove"
+                    class="mt-6 py-2 px-6 rounded-sm self-start text-sm text-white bg-red-500
+                        duration-200 border-solid border-2 border-transparent hover:border-red-600 hover:bg-white hover:text-red-600"
+                    >
+                    Delete
+                </button>
+            </div>
         </form>
         <div v-if="successMsg" class="mb-10 p-4 rounded-md bg-light-grey shadow-lg bg-orange-200">
             <p class="text-red-500 font-bold">
@@ -69,6 +79,7 @@
 import { ref } from "vue";
 import { supabase } from '../supabase';
 import { useUserStore } from "./../store/user";
+import { useTaskStore } from "./../store/task";
 import { storeToRefs } from "pinia";
 import { useRouter, useRoute } from 'vue-router';
 
@@ -82,6 +93,8 @@ export default {
         const successMsg = ref(null);
         const userStore = useUserStore();
         const { user } = storeToRefs(userStore);
+        const tasksStore = useTaskStore();
+
         const router = useRouter();
         const route = useRoute();
 
@@ -90,37 +103,19 @@ export default {
         const taskId = route.params.taskId;
 
         const getData = async() => {
-            console.log("getadata")
             try{
-                let {data: tasks, error} = await supabase
-                    .from('tasks')
-                    .select('*')
-                    .eq('user_id', user._object.user.id)
-                    .eq('id', taskId)
-                if (error) throw error;
-                data.value = tasks[0];
-                console.log("data value")
-                console.log(data.value)
+                data.value = await tasksStore.fetchTask(taskId, user._object.user.id)
                 dataLoaded.value = true;
             } catch (error) {
                 console.warn(error.message);
             }
         }
-
         getData();
 
-            // Update Workout
+        // Update Workout
         const update = async () => {
             try {
-                const { error } = await supabase
-                .from('tasks')
-                .update({
-                    title: data.value.title,
-                    is_complete: data.value.is_complete,
-                })
-                .eq("id", taskId);
-                if (error) throw error;
-                edit.value = false;
+                await tasksStore.update(taskId, data.value.title, data.value.is_complete)
                 successMsg.value = "Success: Workout Updated!";
                 setTimeout(() => {
                     successMsg.value = false;
@@ -129,8 +124,31 @@ export default {
                 console.warn(error.message);
             }
         };
+
+        // Update Workout
+        const remove = async () => {
+            try {
+                await tasksStore.delete(taskId, data.value.title, data.value.is_complete)
+                successMsg.value = "Success: Workout Updated!";
+                setTimeout(() => {
+                    successMsg.value = false;
+                }, 5000);
+                router.push({name: "Home"})
+            } catch (error) {
+                console.warn(error.message);
+            }
+        };
             
-        return { name, dataLoaded, data, errorMsg, successMsg, update };
+        return { 
+            name, 
+            dataLoaded, 
+            data, 
+            errorMsg, 
+            successMsg, 
+            update, 
+            tasksStore,
+            remove
+        };
     }
 }
 </script>
