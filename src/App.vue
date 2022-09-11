@@ -1,10 +1,10 @@
 <template>
   <div class="min-h-full font-Poppins box-border">
     <Navigation></Navigation>
-    <section class="container">
-      
+    <section class="container overflow-hidden mb-20">
       <router-view class="app-main" />
     </section>
+    <Footer></Footer>
   </div>
 </template>
 
@@ -14,6 +14,7 @@ import { storeToRefs } from "pinia";
 import { useRouter, useRoute } from "vue-router";
 import { useUserStore } from "./store/user.js";
 import Navigation from "./components/Navigation.vue";
+import Footer from "./components/Footer.vue";
 
 const router = useRouter();
 
