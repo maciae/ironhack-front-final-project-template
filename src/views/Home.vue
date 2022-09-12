@@ -2,7 +2,6 @@
   <div>
     <div>
         <form 
-            v-if="user.value"
             @submit.prevent="createTask" 
             class="p-8 flex flex-col bg-light-grey rounded-md shadow-lg"
             >
