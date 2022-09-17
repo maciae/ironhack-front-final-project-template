@@ -56,6 +56,7 @@
                 @drop="onDrop($event, 1)"
                 @dragenter.prevent
                 @dragover.prevent
+                @drop.prevent
                 >
                 <router-link 
                     class="flex flex-col items-center mb-5 bg-light-grey p-5 shadow-md cursor-pointer"
@@ -79,6 +80,7 @@
                 @drop="onDrop($event, 2)"
                 @dragenter.prevent
                 @dragover.prevent
+                @drop.prevent
                 >
                 <router-link
                     class="flex flex-col items-center mb-5 bg-light-grey p-5 shadow-md cursor-pointer"
@@ -145,13 +147,6 @@ export default {
         };
         getData();
         const startDrag = (event, item, originList) => {
-            console.log("start drag")
-            console.log(item);
-
-            event.dataTransfer.setData('text/plain', 'dummy');
-
-            event.target.style.opacity=1;
-            event.dataTransfer.dropEffect = "move";
             event.dataTransfer.effectAllowed = "move";
             event.dataTransfer.setData("itemID", item.id);
             event.dataTransfer.setData("originList", originList);
@@ -161,7 +156,6 @@ export default {
             
             const itemID = event.dataTransfer.getData("itemID");
             const originList = event.dataTransfer.getData("originList");
-            alert("drop drag" + originList)
             let isCompleted = true;
             if (originList != list) {
                 if (list == 1) { // TODO LIST
@@ -170,7 +164,6 @@ export default {
                 const updateCompleted = async () => {
                     try {
                         await tasksStore.setTaskCompleted(itemID, isCompleted);
-
                         getData();
                     }
                     catch (error) {
